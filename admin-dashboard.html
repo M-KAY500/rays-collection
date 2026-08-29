@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Ray's Collection</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="images/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <img src="images/logo.png" alt="Ray's Collection logo">
+      <span class="brand-text">Ray's <span>Collection</span></span>
+    </a>
+    <div class="nav-cta">
+      <a class="btn btn-outline btn-sm" href="index.html" target="_blank">View Site ↗</a>
+    </div>
+  </nav>
+</header>
+
+<div class="admin-shell">
+  <aside class="admin-side">
+    <div class="who">
+      Signed in as
+      <b id="who-email">—</b>
+    </div>
+    <nav class="admin-nav">
+      <a class="active">Catalog Manager</a>
+      <button onclick="rcResetConfirm()">Reset to Default Items</button>
+      <button onclick="rcDoLogout()">Log Out</button>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-head">
+      <h1>Catalog Manager</h1>
+      <button class="btn btn-gold" onclick="rcOpenAdd()">+ Add Fragrance</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="num" id="stat-total">0</div>
+        <div class="lbl">Total Items</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="stat-instock">0</div>
+        <div class="lbl">In Stock</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="stat-outstock">0</div>
+        <div class="lbl">Out Of Stock</div>
+      </div>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="admin-tbody"></tbody>
+    </table>
+    <div class="empty-note" id="admin-empty" style="display:none; margin-top:16px;">
+      No fragrances yet — click "Add Fragrance" to create your first listing.
+    </div>
+  </main>
+</div>
+
+<!-- Add / Edit modal -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <h2 id="modal-title">Add New Fragrance</h2>
+    <form id="product-form" onsubmit="rcSaveProduct(event)">
+      <div class="field">
+        <label>Photo</label>
+        <div class="img-preview" id="img-preview-box"><span>No image selected</span></div>
+        <input type="file" id="f-image" accept="image/*">
+        <div class="field-hint">Leave empty when editing to keep the current photo.</div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Noble Black" required>
+        </div>
+        <div class="field">
+          <label for="f-brand">Brand (optional)</label>
+          <input type="text" id="f-brand" placeholder="e.g. Hanna's Secret">
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <label for="f-category">Category</label>
+          <select id="f-category">
+            <option value="">— Select —</option>
+            <option value="For Her">For Her</option>
+            <option value="For Him">For Him</option>
+            <option value="Unisex">Unisex</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-price">Price in GH₵ (optional)</label>
+          <input type="text" id="f-price" placeholder="Leave blank for 'Call for price'">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-desc">Description</label>
+        <textarea id="f-desc" rows="3" placeholder="A short, enticing description of the scent" required></textarea>
+      </div>
+
+      <div class="field" style="display:flex; align-items:center; gap:10px;">
+        <input type="checkbox" id="f-instock" style="width:auto;" checked>
+        <label for="f-instock" style="margin:0; text-transform:none; letter-spacing:0; font-size:.88rem; color:var(--cream);">Currently in stock</label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" onclick="rcCloseModal()">Cancel</button>
+        <button type="submit" class="btn btn-gold">Save Fragrance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/products.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  (async () => {
+    const loggedIn = await rcRequireAuth();
+    if (!loggedIn) return;
+    document.getElementById("who-email").textContent = (await rcCurrentAdminEmail()) || "Admin";
+    rcRenderTable();
+  })();
+
+  async function rcDoLogout() {
+    await rcLogout();
+    window.location.href = "admin-login.html";
+  }
+
+  async function rcResetConfirm() {
+    if (confirm("Reset the catalog to the original starting items? Any items you added will be lost.")) {
+      const result = await rcResetProducts();
+      if (!result.ok) {
+        alert("Couldn't reset catalog: " + result.error);
+        return;
+      }
+      rcRenderTable();
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catalog — Ray's Collection</title>
+<meta name="description" content="Browse the full fragrance catalog at Ray's Collection, Kasoa Top Hill. Call to order.">
+<link rel="icon" href="images/logo.png">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .filter-bar{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:44px; }
+  .filter-chip{
+    padding:9px 20px; border:1px solid var(--panel-line); border-radius:20px; background:transparent;
+    color:var(--cream-dim); font-family:var(--sans); font-size:.8rem; letter-spacing:.05em; cursor:pointer;
+    text-transform:uppercase; transition:all .2s ease;
+  }
+  .filter-chip:hover{ border-color:var(--gold-deep); color:var(--gold-bright); }
+  .filter-chip.active{ background:var(--gold); border-color:var(--gold); color:#160f05; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <img src="images/logo.png" alt="Ray's Collection logo">
+      <span class="brand-text">Ray's <span>Collection</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalog.html" class="active">Catalog</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#visit">Visit Us</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a class="btn btn-gold btn-sm" href="tel:+233550031274">📞 <span class="long">Call to Order</span></a>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section style="padding-bottom:0;">
+    <div class="wrap section-head">
+      <div class="divider"></div>
+      <span class="eyebrow">The Full Collection</span>
+      <h2>Every Fragrance We Carry</h2>
+      <p>Browse the full catalog below. To place an order, simply give us a call — we don't sell directly through the website.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:34px;">
+    <div class="wrap">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-chip active" data-cat="all">All</button>
+        <button class="filter-chip" data-cat="For Her">For Her</button>
+        <button class="filter-chip" data-cat="For Him">For Him</button>
+        <button class="filter-chip" data-cat="Unisex">Unisex</button>
+      </div>
+      <div class="grid" id="catalog-grid"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta-banner">
+        <span class="eyebrow">Found Something You Like?</span>
+        <h2>Give Us A Call</h2>
+        <p>Tell us the name of the fragrance and we'll confirm availability right away.</p>
+        <div class="cta-phone">
+          <a href="tel:+233550031274">055 003 1274</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-bottom">
+      <span>© <span data-year></span> Ray's Collection. All rights reserved.</span>
+      <a href="admin-login.html">Admin</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/products.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let currentCat = "all";
+  function refresh() {
+    rcRenderGrid("catalog-grid", { category: currentCat === "all" ? null : currentCat });
+  }
+  document.querySelectorAll(".filter-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentCat = btn.dataset.cat;
+      refresh();
+    });
+  });
+  refresh();
+</script>
+</body>
+</html>

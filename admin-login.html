@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — Ray's Collection</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="images/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <img src="images/logo.png" alt="Ray's Collection logo">
+      <span class="brand-text">Ray's <span>Collection</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalog.html">Catalog</a></li>
+    </ul>
+    <div class="nav-cta">
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+</header>
+
+<main class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-head">
+      <img src="images/logo.png" alt="Ray's Collection">
+      <h1>Admin Sign In</h1>
+      <p style="margin:0;">Manage the fragrance catalog</p>
+    </div>
+
+    <div class="form-msg error" id="msg"></div>
+
+    <form id="login-form" autocomplete="off">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn btn-gold btn-block">Sign In</button>
+    </form>
+
+    <div class="auth-switch">
+      Don't have an admin account yet? <a href="admin-signup.html">Sign up</a>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // If already signed in, skip straight to the dashboard.
+  rcIsLoggedIn().then(loggedIn => {
+    if (loggedIn) window.location.href = "admin-dashboard.html";
+  });
+
+  const form = document.getElementById("login-form");
+  const msg = document.getElementById("msg");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.classList.remove("show", "error", "success");
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const result = await rcLogin(email, password);
+    document.getElementById("password").value = "";
+
+    if (!result.ok) {
+      msg.textContent = result.error;
+      msg.classList.add("show", "error");
+      return;
+    }
+    window.location.href = "admin-dashboard.html";
+  });
+</script>
+</body>
+</html>
