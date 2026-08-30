@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://m-kay500.github.io/rays-collection/sitemap.xml
